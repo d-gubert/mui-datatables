@@ -618,15 +618,19 @@ class MUIDataTable extends React.Component {
     );
   };
 
-  selectRowDelete = () => {
+  async selectRowDelete = () => {
     const { selectedRows, data, filterList } = this.state;
+    
+    if (this.options.onRowsDelete) {
+      const result = await this.options.onRowsDelete(selectedRows);
+      
+      if (result === false) {
+        return false;
+      }
+    }
 
     const selectedMap = this.buildSelectedMap(selectedRows.data);
     const cleanRows = data.filter((_, index) => !selectedMap[index]);
-
-    if (this.options.onRowsDelete) {
-      this.options.onRowsDelete(selectedRows);
-    }
 
     this.setTableData(
       {
